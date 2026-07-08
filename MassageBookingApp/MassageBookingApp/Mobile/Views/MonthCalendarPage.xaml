@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MassageBookingApp.Mobile.Views.MonthCalendarPage"
+             xmlns:models="clr-namespace:MassageBookingApp.Mobile.Models.Calendar"
+             Title="Month Calendar">
+    <Grid RowDefinitions="Auto,Auto,Auto,*,Auto" Padding="12">
+
+        <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Margin="0,0,0,12">
+            <Button Grid.Column="0"
+                    Text="&lt;"
+                    WidthRequest="50"
+                    Command="{Binding PreviousMonthCommand}" />
+
+            <Label Grid.Column="1"
+                   Text="{Binding Title}"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"
+                   FontSize="22"
+                   FontAttributes="Bold" />
+
+            <Button Grid.Column="2"
+                    Text="&gt;"
+                    WidthRequest="50"
+                    Command="{Binding NextMonthCommand}" />
+        </Grid>
+
+        <Grid Grid.Row="1"
+              ColumnDefinitions="*,*,*,*,*,*,*"
+              Margin="0,0,0,8">
+            <Label Grid.Column="0" Text="Mon" HorizontalTextAlignment="Center" FontAttributes="Bold" />
+            <Label Grid.Column="1" Text="Tue" HorizontalTextAlignment="Center" FontAttributes="Bold" />
+            <Label Grid.Column="2" Text="Wed" HorizontalTextAlignment="Center" FontAttributes="Bold" />
+            <Label Grid.Column="3" Text="Thu" HorizontalTextAlignment="Center" FontAttributes="Bold" />
+            <Label Grid.Column="4" Text="Fri" HorizontalTextAlignment="Center" FontAttributes="Bold" />
+            <Label Grid.Column="5" Text="Sat" HorizontalTextAlignment="Center" FontAttributes="Bold" />
+            <Label Grid.Column="6" Text="Sun" HorizontalTextAlignment="Center" FontAttributes="Bold" />
+        </Grid>
+
+        <Label Grid.Row="2"
+               Text="{Binding ErrorMessage}"
+               TextColor="Red"
+               IsVisible="{Binding HasError}"
+               Margin="0,0,0,8" />
+
+        <CollectionView Grid.Row="3"
+                        ItemsSource="{Binding Days}"
+                        SelectionMode="None">
+            <CollectionView.ItemsLayout>
+                <GridItemsLayout Orientation="Vertical" Span="7" />
+            </CollectionView.ItemsLayout>
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:MonthDayDto">
+                    <Frame Padding="6"
+                           Margin="2"
+                           BorderColor="{StaticResource BorderColor}"
+                           BackgroundColor="{Binding IsCurrentMonth, Converter={StaticResource BoolToColorConverter}}">
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="{Binding DayNumber}"
+                                   FontAttributes="Bold"
+                                   FontSize="14" />
+
+                            <Label Text="{Binding BookingCount, StringFormat='Bookings: {0}'}"
+                                   FontSize="11" />
+
+                            <Label Text="{Binding TotalMassageMinutes, StringFormat='Minutes: {0}'}"
+                                   FontSize="11" />
+
+                            <Grid ColumnDefinitions="*,*" Margin="0,4,0,0">
+                                <Button Grid.Column="0"
+                                        Text="Day"
+                                        Padding="4"
+                                        FontSize="10"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectDayCommand}"
+                                        CommandParameter="{Binding .}" />
+
+                                <Button Grid.Column="1"
+                                        Text="Week"
+                                        Padding="4"
+                                        FontSize="10"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.OpenWeekCommand}"
+                                        CommandParameter="{Binding .}" />
+                            </Grid>
+                        </VerticalStackLayout>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <Grid Grid.Row="4" ColumnDefinitions="*,*" Margin="0,12,0,0">
+            <Button Grid.Column="0"
+                    Text="Refresh"
+                    Command="{Binding LoadCommand}" />
+
+            <Button Grid.Column="1"
+                    Text="Logout"
+                    Command="{Binding LogoutCommand}" />
+        </Grid>
+
+        <ActivityIndicator Grid.RowSpan="5"
+                           IsRunning="{Binding IsBusy}"
+                           IsVisible="{Binding IsBusy}"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center" />
+    </Grid>
+</ContentPage>

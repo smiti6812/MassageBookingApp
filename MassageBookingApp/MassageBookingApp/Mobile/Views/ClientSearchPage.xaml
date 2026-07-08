@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MassageBookingApp.Mobile.Views.ClientSearchPage"
+             xmlns:clients="clr-namespace:MassageBookingApp.Mobile.Models.Clients"
+             xmlns:bookings="clr-namespace:MassageBookingApp.Mobile.Models.Bookings"
+             Title="Client Search">
+    <Grid RowDefinitions="Auto,Auto,*,Auto" Padding="12">
+
+        <VerticalStackLayout Grid.Row="0" Spacing="8">
+            <Label Text="Client Search"
+                   FontSize="24"
+                   FontAttributes="Bold" />
+
+            <Entry Text="{Binding SearchText}"
+                   Placeholder="Search by client name or phone number" />
+
+            <Button Text="Search"
+                    Command="{Binding SearchCommand}" />
+        </VerticalStackLayout>
+
+        <Label Grid.Row="1"
+               Text="{Binding ErrorMessage}"
+               TextColor="Red"
+               IsVisible="{Binding HasError}"
+               Margin="0,8,0,8" />
+
+        <ScrollView Grid.Row="2">
+            <VerticalStackLayout BindableLayout.ItemsSource="{Binding Results}" Spacing="12">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate x:DataType="clients:ClientSearchResultDto">
+                        <Frame Padding="10"
+                               BorderColor="{StaticResource BorderColor}"
+                               BackgroundColor="White">
+                            <VerticalStackLayout Spacing="8">
+
+                                <Label Text="{Binding FullName}"
+                                       FontAttributes="Bold"
+                                       FontSize="18" />
+
+                                <Label Text="{Binding PhoneNumber}"
+                                       TextColor="Gray" />
+
+                                <VerticalStackLayout BindableLayout.ItemsSource="{Binding Bookings}" Spacing="6">
+                                    <BindableLayout.ItemTemplate>
+                                        <DataTemplate x:DataType="bookings:BookingDto">
+                                            <Frame Padding="8"
+                                                   BackgroundColor="#F8F8F8"
+                                                   BorderColor="{StaticResource BorderColor}">
+                                                <Frame.GestureRecognizers>
+                                                    <TapGestureRecognizer
+                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.OpenBookingCommand}"
+                                                        CommandParameter="{Binding .}" />
+                                                </Frame.GestureRecognizers>
+
+                                                <VerticalStackLayout Spacing="2">
+                                                    <Label Text="{Binding BookingDate, StringFormat='Date: {0:yyyy-MM-dd}'}"
+                                                           FontAttributes="Bold" />
+                                                    <Label Text="{Binding StartTime, StringFormat='Start: {0:HH\\:mm}'}" />
+                                                    <Label Text="{Binding TherapistName, StringFormat='Therapist: {0}'}" />
+                                                    <Label Text="{Binding RoomName, StringFormat='Room: {0}'}" />
+                                                </VerticalStackLayout>
+                                            </Frame>
+                                        </DataTemplate>
+                                    </BindableLayout.ItemTemplate>
+                                </VerticalStackLayout>
+
+                            </VerticalStackLayout>
+                        </Frame>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <ActivityIndicator Grid.RowSpan="4"
+                           IsRunning="{Binding IsBusy}"
+                           IsVisible="{Binding IsBusy}"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center" />
+    </Grid>
+</ContentPage>

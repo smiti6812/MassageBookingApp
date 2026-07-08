@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MassageBookingApp.Mobile.Views.BookingEditorPage"
+             xmlns:clients="clr-namespace:MassageBookingApp.Mobile.Models.Clients"
+             xmlns:calendar="clr-namespace:MassageBookingApp.Mobile.Models.Calendar"
+             Title="Booking Editor">
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="12">
+
+            <Label Text="{Binding Title}"
+                   FontSize="24"
+                   FontAttributes="Bold" />
+
+            <Label Text="{Binding BookingDateText, StringFormat='Date: {0}'}"
+                   FontSize="16" />
+
+            <Label Text="{Binding StartTimeText, StringFormat='Start Time: {0}'}"
+                   FontSize="16" />           
+            <TimePicker Time="{Binding SelectedStartTime}" />
+
+            <Label Text="Duration" FontAttributes="Bold" />
+            <Picker Title="Select duration"
+                    ItemsSource="{Binding AllowedDurations}"
+                    SelectedItem="{Binding SelectedDuration}" />
+
+            <Button Text="Refresh Availability"
+                    Command="{Binding LoadAvailabilityCommand}" />
+
+            <Label Text="Client" FontAttributes="Bold" />
+            <Picker Title="Select client"
+                    ItemsSource="{Binding Clients}"
+                    SelectedItem="{Binding SelectedClient}">
+                <Picker.ItemDisplayBinding>
+                    <Binding Path="DisplayText" />
+                </Picker.ItemDisplayBinding>
+            </Picker>
+
+            <Label Text="Available Therapist" FontAttributes="Bold" />
+            <Picker Title="Select therapist"
+                    ItemsSource="{Binding AvailableTherapists}"
+                    SelectedItem="{Binding SelectedTherapist}">
+                <Picker.ItemDisplayBinding>
+                    <Binding Path="TherapistName" />
+                </Picker.ItemDisplayBinding>
+            </Picker>
+
+            <Label Text="Available Room Station" FontAttributes="Bold" />
+            <Picker Title="Select room station"
+                    ItemsSource="{Binding AvailableRoomStations}"
+                    SelectedItem="{Binding SelectedRoomStation}">
+                <Picker.ItemDisplayBinding>
+                    <Binding Path="DisplayText" />
+                </Picker.ItemDisplayBinding>
+            </Picker>
+
+            <Label Text="Notes" FontAttributes="Bold" />
+            <Editor Text="{Binding Notes}"
+                    AutoSize="TextChanges"
+                    HeightRequest="100" />
+
+            <Label Text="{Binding ErrorMessage}"
+                   TextColor="Red"
+                   IsVisible="{Binding HasError}" />
+
+            <Grid ColumnDefinitions="*,*" Margin="0,12,0,0">
+                <Button Grid.Column="0"
+                        Text="Save"
+                        Command="{Binding SaveCommand}" />
+
+                <Button Grid.Column="1"
+                        Text="Cancel"
+                        Command="{Binding CancelCommand}" />
+            </Grid>
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}"
+                               IsVisible="{Binding IsBusy}" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

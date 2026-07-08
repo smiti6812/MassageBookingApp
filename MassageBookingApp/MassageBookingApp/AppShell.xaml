@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="MassageBookingApp.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:MassageBookingApp.Mobile.Views"
+    Title="Massage Booking App">
+
+    <ShellContent
+        Title="Login"
+        ContentTemplate="{DataTemplate local:LoginPage}"
+        Route="login" />
+
+    <ShellContent
+        Title="Calendar"
+        ContentTemplate="{DataTemplate local:MonthCalendarPage}"
+        Route="month" />
+
+    <ShellContent
+        Title="Week"
+        ContentTemplate="{DataTemplate local:WeekCalendarPage}"
+        Route="week" />
+
+    <ShellContent
+        Title="Day"
+        ContentTemplate="{DataTemplate local:DaySchedulePage}"
+        Route="day" />
+
+    <ShellContent
+        Title="Booking Editor"
+        ContentTemplate="{DataTemplate local:BookingEditorPage}"
+        Route="booking-editor" />
+</Shell>
