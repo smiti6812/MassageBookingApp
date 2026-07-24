@@ -7,5 +7,6 @@ namespace MassageBookingApp.Mobile.Services.Interfaces
         Task<IReadOnlyList<ClientDto>> GetClientsAsync(CancellationToken cancellationToken = default);
         Task<ClientDto> CreateClientAsync(CreateClientRequest request, CancellationToken cancellationToken = default);
         Task<IReadOnlyList<ClientSearchResultDto>> SearchClientsAsync(string query, CancellationToken cancellationToken = default);
+        Task<IReadOnlyList<ClientSearchResultDto>> SearchClientsWithoutBookingAsync(string query, CancellationToken cancellationToken = default);
     }
 }

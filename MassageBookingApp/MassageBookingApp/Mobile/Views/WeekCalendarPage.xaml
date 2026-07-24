@@ -8,11 +8,13 @@
 
         <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Margin="0,0,0,12">
             <Button Grid.Column="0"
+                    BackgroundColor="{StaticResource Cornflower}"
+                    TextColor="White"
                     Text="&lt;"
                     WidthRequest="50"
                     Command="{Binding PreviousWeekCommand}" />
 
-            <Label Grid.Column="1"
+            <Label Grid.Column="1"                   
                    Text="{Binding Title}"
                    HorizontalOptions="Center"
                    VerticalOptions="Center"
@@ -20,6 +22,8 @@
                    FontSize="18" />
 
             <Button Grid.Column="2"
+                    BackgroundColor="{StaticResource Cornflower}"
+                    TextColor="White"
                     Text="&gt;"
                     WidthRequest="50"
                     Command="{Binding NextWeekCommand}" />
@@ -62,10 +66,16 @@
 
         <Grid Grid.Row="3" ColumnDefinitions="*,*" Margin="0,12,0,0">
             <Button Grid.Column="0"
+                    Margin="2"
+                    BackgroundColor="{StaticResource Cornflower}"
+                    TextColor="White"
                     Text="Back to Month"
                     Command="{Binding BackToMonthCommand}" />
 
             <Button Grid.Column="1"
+                    Margin="2"
+                    BackgroundColor="{StaticResource Cornflower}"
+                    TextColor="White"
                     Text="Refresh"
                     Command="{Binding LoadCommand}" />
         </Grid>

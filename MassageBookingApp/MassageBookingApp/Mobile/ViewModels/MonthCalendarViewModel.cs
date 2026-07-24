@@ -81,8 +81,14 @@ namespace MassageBookingApp.Mobile.ViewModels
                 {
                     if (day.Date.Year == Year && day.Date.Month == Month)
                     {
-                        Days.Add(day);
+                        day.IsVisible = true;
                     }
+                    else
+                    {
+                        day.IsVisible = false;
+                    }
+
+                    Days.Add(day);
                 }
             }
             catch (Exception ex)
@@ -141,7 +147,8 @@ namespace MassageBookingApp.Mobile.ViewModels
                 return;
             }
 
-            await Shell.Current.GoToAsync($"//week?date={day.Date:yyyy-MM-dd}");
+            //await Shell.Current.GoToAsync($"//week?date={day.Date:yyyy-MM-dd}");
+            await Shell.Current.GoToAsync($"//week-schedule?date={day.Date:yyyy-MM-dd}");
         }
     }
 }

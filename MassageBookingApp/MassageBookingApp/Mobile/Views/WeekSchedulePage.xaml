@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MassageBookingApp.Mobile.Views.WeekSchedulePage"
+             xmlns:models="clr-namespace:MassageBookingApp.Mobile.Models.Calendar"
+             xmlns:controls="clr-namespace:MassageBookingApp.Mobile.Views"
+             Title="Week Schedule">
+    <Grid RowDefinitions="Auto,Auto,Auto,*,Auto" Padding="12" HorizontalOptions="Center">
+
+        <!-- Header -->
+        <Grid Grid.Row="0" HorizontalOptions="Center" ColumnDefinitions="Auto,Auto,*,Auto" Margin="0,0,0,12">           
+            <Button Grid.Column="0"
+                    BackgroundColor="{StaticResource Cornflower}"
+                    TextColor="White"
+                    Text="&lt;"
+                    WidthRequest="50"
+                    Command="{Binding PreviousWeekCommand}" />
+
+            <Label Grid.Column="1" Margin="10"                  
+                   Text="{Binding Title}"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"
+                   FontAttributes="Bold"
+                   FontSize="18" />
+
+            <Button Grid.Column="2"
+                    BackgroundColor="{StaticResource Cornflower}"
+                    TextColor="White"
+                    Text="&gt;"
+                    WidthRequest="50"
+                    Command="{Binding NextWeekCommand}" />
+           
+        </Grid>
+
+        <!-- Error -->
+        <Label Grid.Row="1"
+               Text="{Binding ErrorMessage}"
+               TextColor="Red"
+               IsVisible="{Binding HasError}"
+               Margin="0,0,0,8" />
+
+        <controls:PagingView Grid.Row="2" PagingViewModel="{Binding TherapistPager}" HorizontalOptions="Center" />
+
+        <!-- Weekly grid -->
+        <ScrollView Grid.Row="3" Orientation="Both" HorizontalScrollBarVisibility="Always" VerticalScrollBarVisibility="Always">
+            <VerticalStackLayout Spacing="0">
+
+                <!-- Fixed header row -->
+                <Grid ColumnDefinitions="80,100,100,100,100,100,100,100"
+                      Padding="4"
+                      ColumnSpacing="2"
+                      BackgroundColor="#E5E7EB">
+
+                    <Frame Grid.Column="0"
+                           Padding="4"
+                           BorderColor="{StaticResource BorderColor}"
+                           BackgroundColor="#F3F4F6">
+                        <Label Text="Time"
+                               FontAttributes="Bold"
+                               HorizontalTextAlignment="Center"
+                               VerticalTextAlignment="Center" />
+                    </Frame>
+
+                    <Frame Grid.Column="1" Padding="4" BorderColor="{StaticResource BorderColor}" BackgroundColor="#F3F4F6">
+                        <Label Text="{Binding MondayHeader}"                               
+                               FontAttributes="Bold"
+                               HorizontalTextAlignment="Center"
+                               VerticalTextAlignment="Center" />
+                    </Frame>
+
+                    <Frame Grid.Column="2" Padding="4" BorderColor="{StaticResource BorderColor}" BackgroundColor="#F3F4F6">
+                        <Label Text="{Binding TuesdayHeader}"
+                               FontAttributes="Bold"
+                               HorizontalTextAlignment="Center"
+                               VerticalTextAlignment="Center" />
+                    </Frame>
+
+                    <Frame Grid.Column="3" Padding="4" BorderColor="{StaticResource BorderColor}" BackgroundColor="#F3F4F6">
+                        <Label Text="{Binding WednesdayHeader}"
+                               FontAttributes="Bold"
+                               HorizontalTextAlignment="Center"
+                               VerticalTextAlignment="Center" />
+                    </Frame>
+
+                    <Frame Grid.Column="4" Padding="4" BorderColor="{StaticResource BorderColor}" BackgroundColor="#F3F4F6">
+                        <Label Text="{Binding ThursdayHeader}"
+                               FontAttributes="Bold"
+                               HorizontalTextAlignment="Center"
+                               VerticalTextAlignment="Center" />
+                    </Frame>
+
+                    <Frame Grid.Column="5" Padding="4" BorderColor="{StaticResource BorderColor}" BackgroundColor="#F3F4F6">
+                        <Label Text="{Binding FridayHeader}"
+                               FontAttributes="Bold"
+                               HorizontalTextAlignment="Center"
+                               VerticalTextAlignment="Center" />
+                    </Frame>
+
+                    <Frame Grid.Column="6" Padding="4" BorderColor="{StaticResource BorderColor}" BackgroundColor="#F3F4F6">
+                        <Label Text="{Binding SaturdayHeader}"
+                               FontAttributes="Bold"
+                               HorizontalTextAlignment="Center"
+                               VerticalTextAlignment="Center" />
+                    </Frame>
+
+                    <Frame Grid.Column="7" Padding="4" BorderColor="{StaticResource BorderColor}" BackgroundColor="#F3F4F6">
+                        <Label Text="{Binding SundayHeader}"
+                               FontAttributes="Bold"
+                               HorizontalTextAlignment="Center"
+                               VerticalTextAlignment="Center" />
+                    </Frame>
+                </Grid>
+
+                <!-- Dynamic rows -->
+                <VerticalStackLayout BindableLayout.ItemsSource="{Binding CurrentTherapist.Rows}" Spacing="2">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="models:WeeklyTherapistScheduleDto">
+                            <Grid ColumnDefinitions="80,*"
+                                  ColumnSpacing="2"
+                                  Padding="2">
+
+                                <!-- Time column -->
+                                <Frame Grid.Column="0"
+                                       Padding="4"
+                                       BorderColor="{StaticResource BorderColor}"
+                                       BackgroundColor="#F3F4F6">
+                                    <Label Text="{Binding TimeSlot}"
+                                           FontAttributes="Bold"
+                                           FontSize="12"
+                                           HorizontalTextAlignment="Center"
+                                           VerticalTextAlignment="Center" />
+                                </Frame>
+
+                                <!-- Week cells -->
+                                <HorizontalStackLayout Grid.Column="1"
+                                                       BindableLayout.ItemsSource="{Binding Cells}"
+                                                       Spacing="2">
+                                    <BindableLayout.ItemTemplate>
+                                        <DataTemplate x:DataType="models:WeekScheduleCellDto">
+                                            <Frame WidthRequest="100"
+                                                   MinimumHeightRequest="60"
+                                                   Padding="4"
+                                                   BorderColor="{StaticResource BorderColor}"
+                                                   BackgroundColor="{Binding BackgroundColor}">
+                                                <Frame.GestureRecognizers>
+                                                    <TapGestureRecognizer
+                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectCellCommand}"
+                                                        CommandParameter="{Binding .}" />
+                                                </Frame.GestureRecognizers>
+
+                                                <VerticalStackLayout Spacing="1">
+                                                    <Label Text="{Binding BookingStartTime}"
+                                                           FontSize="10"
+                                                           FontAttributes="Bold"
+                                                           IsVisible="{Binding IsBookingStartCell}" />
+
+                                                    <Label Text="{Binding ClientName}"
+                                                           FontSize="10"
+                                                           FontAttributes="Bold"
+                                                           LineBreakMode="TailTruncation" />
+
+                                                    <Label Text="{Binding TherapistName}"
+                                                           FontSize="9"
+                                                           LineBreakMode="TailTruncation"/>
+                                                    
+                                                    <Label Text="{Binding BookingEndTime}"
+                                                            FontSize="10"
+                                                            FontAttributes="Bold"
+                                                            IsVisible="{Binding IsBookingEndCell}" />                   
+                                                </VerticalStackLayout>
+                                            </Frame>
+                                        </DataTemplate>
+                                    </BindableLayout.ItemTemplate>
+                                </HorizontalStackLayout>
+
+                            </Grid>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- Footer -->
+        <Grid Grid.Row="4" ColumnDefinitions="*,*,*" Margin="0,12,0,0">
+            <Button Grid.Column="0"
+                    BackgroundColor="{StaticResource Cornflower}"
+                    TextColor="White"
+                    Margin="2"
+                    Text="Month"
+                    Command="{Binding BackToMonthCommand}" />
+
+            <Button Grid.Column="1"
+                    BackgroundColor="{StaticResource Cornflower}"
+                    TextColor="White"
+                    Margin="2"
+                    Text="Day"
+                    Command="{Binding BackToDayCommand}" />
+
+            <Button Grid.Column="2"
+                    BackgroundColor="{StaticResource Cornflower}"
+                    TextColor="White"
+                    Margin="2"
+                    Text="Refresh"
+                    Command="{Binding LoadCommand}" />
+        </Grid>
+
+        <ActivityIndicator Grid.RowSpan="4"
+                           IsRunning="{Binding IsBusy}"
+                           IsVisible="{Binding IsBusy}"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center" />
+    </Grid>
+</ContentPage>

@@ -91,12 +91,18 @@ namespace MassageBookingApp
             builder.Services.AddTransient<WeekCalendarViewModel>();
             builder.Services.AddTransient<DayScheduleViewModel>();
             builder.Services.AddTransient<BookingEditorViewModel>();
+            builder.Services.AddTransient<ClientSearchViewModel>();
+            builder.Services.AddTransient<CreateClientViewModel>();
+            builder.Services.AddTransient<WeekScheduleViewModel>();
 
             builder.Services.AddTransient<LoginPage>();
             builder.Services.AddTransient<MonthCalendarPage>();
             builder.Services.AddTransient<WeekCalendarPage>();
             builder.Services.AddTransient<DaySchedulePage>();
             builder.Services.AddTransient<BookingEditorPage>();
+            builder.Services.AddTransient<ClientSearchPage>();
+            builder.Services.AddTransient<CreateClientPage>();
+            builder.Services.AddTransient<WeekSchedulePage>();
 
             return builder.Build();
         }

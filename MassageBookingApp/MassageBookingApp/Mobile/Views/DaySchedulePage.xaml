@@ -3,11 +3,16 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MassageBookingApp.Mobile.Views.DaySchedulePage"
              xmlns:models="clr-namespace:MassageBookingApp.Mobile.Models.Calendar"
+             xmlns:viewModel="clr-namespace:MassageBookingApp.Mobile.ViewModels"
+             xmlns:controls="clr-namespace:MassageBookingApp.Mobile.Views"
              Title="Day Schedule">
-    <Grid RowDefinitions="Auto,Auto,*,Auto" Padding="12">
+    <Grid RowDefinitions="Auto,Auto,Auto,*,Auto" Padding="12">
 
+        <!-- Header -->
         <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Margin="0,0,0,12">
             <Button Grid.Column="0"
+                    BackgroundColor="{StaticResource Cornflower}"
+                    TextColor="White"
                     Text="&lt;"
                     WidthRequest="50"
                     Command="{Binding PreviousDayCommand}" />
@@ -20,116 +25,136 @@
                    FontSize="18" />
 
             <Button Grid.Column="2"
+                    BackgroundColor="{StaticResource Cornflower}"
+                    TextColor="White"
                     Text="&gt;"
                     WidthRequest="50"
                     Command="{Binding NextDayCommand}" />
         </Grid>
 
+        <!-- Error -->
         <Label Grid.Row="1"
                Text="{Binding ErrorMessage}"
                TextColor="Red"
                IsVisible="{Binding HasError}"
                Margin="0,0,0,8" />
 
-        <ScrollView Grid.Row="2">
+        <!-- Generic pager -->       
+        <controls:PagingView Grid.Row="2" PagingViewModel="{Binding RoomPager}" />
+        
+        <!-- Current room content -->
+        <ScrollView Grid.Row="3">
             <VerticalStackLayout Spacing="12">
 
                 <Button Text="New Booking"
+                        BackgroundColor="{StaticResource Cornflower}"
+                        TextColor="White"
                         Command="{Binding OpenNewBookingCommand}" />
 
-                <VerticalStackLayout BindableLayout.ItemsSource="{Binding Rooms}" Spacing="12">
-                    <BindableLayout.ItemTemplate>
-                        <DataTemplate x:DataType="models:DayRoomScheduleDto">
-                            <Frame Padding="10"
-                                   BorderColor="{StaticResource BorderColor}"
-                                   BackgroundColor="White">
-                                <VerticalStackLayout Spacing="8">
+                <Frame Padding="10"
+                       BorderColor="{StaticResource BorderColor}"
+                       BackgroundColor="White"
+                       IsVisible="{Binding CurrentRoom, Converter={StaticResource NotNullConverter}}">
 
-                                    <HorizontalStackLayout Spacing="8">
-                                        <Label Text="{Binding RoomName}"
-                                               FontAttributes="Bold"
-                                               FontSize="18" />
+                    <VerticalStackLayout Spacing="8">
 
-                                        <Label Text="{Binding RoomCapacity, StringFormat='(Capacity: {0})'}"
-                                               FontSize="16"
-                                               TextColor="Gray" />
-                                    </HorizontalStackLayout>
+                        <HorizontalStackLayout Spacing="8">
+                            <Label Text="{Binding CurrentRoom.RoomName}"
+                                   FontAttributes="Bold"
+                                   FontSize="22" />
 
-                                    <Label Text="{Binding RoomStationName}"
-                                           FontSize="14"
-                                           TextColor="Gray" />
+                            <Label Text="{Binding CurrentRoom.RoomCapacity, StringFormat='(Capacity: {0})'}"
+                                   FontSize="18"
+                                   TextColor="Gray" />
+                        </HorizontalStackLayout>
 
-                                    <CollectionView ItemsSource="{Binding Cells}"
-                                                    SelectionMode="None"
-                                                    HeightRequest="220">
-                                        <CollectionView.ItemsLayout>
-                                            <GridItemsLayout Orientation="Vertical" Span="3" />
-                                        </CollectionView.ItemsLayout>
+                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding CurrentRoom.Stations}" Spacing="12">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="viewModel:RoomStationScheduleViewModel">
+                                    <Frame Padding="8"
+                                           BorderColor="{StaticResource BorderColor}"
+                                           BackgroundColor="#FAFAFA">
+                                        <VerticalStackLayout Spacing="8">
 
-                                        <CollectionView.ItemTemplate>
-                                            <DataTemplate x:DataType="models:DayScheduleCellDto">
-                                                <Frame Padding="6"
-                                                       Margin="2"
-                                                       BackgroundColor="{Binding BackgroundColor}"
-                                                       BorderColor="{StaticResource BorderColor}">
-                                                    <Frame.GestureRecognizers>
-                                                        <TapGestureRecognizer
-                                                            Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectCellCommand}"
-                                                            CommandParameter="{Binding .}" />
-                                                    </Frame.GestureRecognizers>
+                                            <Label Text="{Binding RoomStationName}"
+                                                   FontAttributes="Bold"
+                                                   FontSize="16" />
 
-                                                    <VerticalStackLayout Spacing="2">
-                                                        <Label Text="{Binding TimeSlot}"
-                                                               FontSize="12"
-                                                               FontAttributes="Bold" />
+                                            <CollectionView ItemsSource="{Binding Cells}"
+                                                            SelectionMode="None">
+                                                <CollectionView.ItemsLayout>
+                                                    <GridItemsLayout Orientation="Vertical" Span="3" />
+                                                </CollectionView.ItemsLayout>
 
-                                                        <Label Text="{Binding ClientName}"
-                                                               FontSize="11"
-                                                               LineBreakMode="TailTruncation" />
+                                                <CollectionView.ItemTemplate>
+                                                    <DataTemplate x:DataType="models:DayScheduleCellDto">
+                                                        <Frame Padding="6"
+                                                               Margin="2"
+                                                               BackgroundColor="{Binding BackgroundColor}"
+                                                               BorderColor="{StaticResource BorderColor}">
+                                                            <Frame.GestureRecognizers>
+                                                                <TapGestureRecognizer
+                                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectCellCommand}"
+                                                                    CommandParameter="{Binding .}" />
+                                                            </Frame.GestureRecognizers>
 
-                                                        <Label Text="{Binding TherapistName}"
-                                                               FontSize="10"
-                                                               LineBreakMode="TailTruncation" />
+                                                            <VerticalStackLayout Spacing="2">
+                                                                <Label Text="{Binding TimeSlot}"
+                                                                       FontSize="12"
+                                                                       FontAttributes="Bold" />
 
-                                                        <Button Text="Book"
-                                                                FontSize="10"
-                                                                Padding="2"
-                                                                IsVisible="{Binding IsOccupied, Converter={StaticResource InverseBoolConverter}}"
-                                                                Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.OpenNewBookingForSlotCommand}"
-                                                                CommandParameter="{Binding TimeSlot}" />
-                                                    </VerticalStackLayout>
-                                                </Frame>
-                                            </DataTemplate>
-                                        </CollectionView.ItemTemplate>
-                                    </CollectionView>
+                                                                <Label Text="{Binding ClientName}"
+                                                                       FontSize="11"
+                                                                       FontAttributes="Bold"
+                                                                       LineBreakMode="TailTruncation" />
 
-                                </VerticalStackLayout>
-                            </Frame>
-                        </DataTemplate>
-                    </BindableLayout.ItemTemplate>
-                </VerticalStackLayout>
+                                                                <Label Text="{Binding TherapistName}"
+                                                                       FontSize="10"
+                                                                       LineBreakMode="TailTruncation" />
+                                                            </VerticalStackLayout>
+                                                        </Frame>
+                                                    </DataTemplate>
+                                                </CollectionView.ItemTemplate>
+                                            </CollectionView>
+                                        </VerticalStackLayout>
+                                    </Frame>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+
+                    </VerticalStackLayout>
+                </Frame>
             </VerticalStackLayout>
         </ScrollView>
 
-        <Grid Grid.Row="3" ColumnDefinitions="*,*,*" Margin="0,12,0,0">
+        <!-- Footer -->
+        <Grid Grid.Row="4" ColumnDefinitions="*,*,*" Margin="0,12,0,0">
             <Button Grid.Column="0"
+                    Margin="2"
+                    BackgroundColor="{StaticResource Cornflower}"
+                    TextColor="White"
                     Text="Month"
                     Command="{Binding BackToMonthCommand}" />
 
             <Button Grid.Column="1"
+                    Margin="2"
+                    BackgroundColor="{StaticResource Cornflower}"
+                    TextColor="White"
                     Text="Week"
                     Command="{Binding BackToWeekCommand}" />
 
             <Button Grid.Column="2"
+                    Margin="2"
+                    BackgroundColor="{StaticResource Cornflower}"
+                    TextColor="White"
                     Text="Refresh"
                     Command="{Binding LoadCommand}" />
         </Grid>
 
-        <ActivityIndicator Grid.RowSpan="4"
+        <ActivityIndicator Grid.RowSpan="5"
                            IsRunning="{Binding IsBusy}"
                            IsVisible="{Binding IsBusy}"
                            HorizontalOptions="Center"
                            VerticalOptions="Center" />
     </Grid>
-
 </ContentPage>

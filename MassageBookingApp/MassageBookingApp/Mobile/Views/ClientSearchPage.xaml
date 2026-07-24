@@ -16,6 +16,8 @@
                    Placeholder="Search by client name or phone number" />
 
             <Button Text="Search"
+                    BackgroundColor="{StaticResource Cornflower}"
+                    TextColor="White"
                     Command="{Binding SearchCommand}" />
         </VerticalStackLayout>
 

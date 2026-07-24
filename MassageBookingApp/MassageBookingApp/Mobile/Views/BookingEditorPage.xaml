@@ -12,11 +12,10 @@
                    FontSize="24"
                    FontAttributes="Bold" />
 
-            <Label Text="{Binding BookingDateText, StringFormat='Date: {0}'}"
-                   FontSize="16" />
+            <Label Text="Date" FontAttributes="Bold" />
+            <DatePicker Date="{Binding SelectedDate}" />
 
-            <Label Text="{Binding StartTimeText, StringFormat='Start Time: {0}'}"
-                   FontSize="16" />           
+            <Label Text="Start Time" FontAttributes="Bold" />
             <TimePicker Time="{Binding SelectedStartTime}" />
 
             <Label Text="Duration" FontAttributes="Bold" />
@@ -24,17 +23,39 @@
                     ItemsSource="{Binding AllowedDurations}"
                     SelectedItem="{Binding SelectedDuration}" />
 
+            <Label Text="{Binding ValidationInfo}"
+                   TextColor="DarkBlue"
+                   IsVisible="{Binding HasValidationInfo}"
+                   FontSize="12" />
+
             <Button Text="Refresh Availability"
+                    BackgroundColor="{StaticResource Cornflower}"
+                    TextColor="White"
                     Command="{Binding LoadAvailabilityCommand}" />
 
-            <Label Text="Client" FontAttributes="Bold" />
-            <Picker Title="Select client"
-                    ItemsSource="{Binding Clients}"
-                    SelectedItem="{Binding SelectedClient}">
-                <Picker.ItemDisplayBinding>
-                    <Binding Path="DisplayText" />
-                </Picker.ItemDisplayBinding>
-            </Picker>
+            <Label Text="Search Client" FontAttributes="Bold" />
+            <Entry Text="{Binding ClientSearchText}"
+                   Placeholder="Search by name or phone number" />
+
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                <VerticalStackLayout Grid.Column="0" Spacing="4">
+                    <Label Text="Client" FontAttributes="Bold" />
+                    <Picker Title="Select client"
+                            ItemsSource="{Binding Clients}"
+                            SelectedItem="{Binding SelectedClient}">
+                        <Picker.ItemDisplayBinding>
+                            <Binding Path="DisplayText" />
+                        </Picker.ItemDisplayBinding>
+                    </Picker>
+                </VerticalStackLayout>
+
+                <Button Grid.Column="1"
+                        Text="+"
+                        WidthRequest="44"
+                        HeightRequest="44"
+                        VerticalOptions="End"
+                        Command="{Binding OpenCreateClientCommand}" />
+            </Grid>
 
             <Label Text="Available Therapist" FontAttributes="Bold" />
             <Picker Title="Select therapist"
@@ -63,12 +84,23 @@
                    TextColor="Red"
                    IsVisible="{Binding HasError}" />
 
-            <Grid ColumnDefinitions="*,*" Margin="0,12,0,0">
-                <Button Grid.Column="0"
+            <Grid ColumnDefinitions="*,*,*" Margin="0,12,0,0">
+                <Button Margin="2" Grid.Column="0"
+                        BackgroundColor="{StaticResource Cornflower}"
+                        TextColor="White"
                         Text="Save"
                         Command="{Binding SaveCommand}" />
 
-                <Button Grid.Column="1"
+                <Button Margin="2" Grid.Column="1"
+                        BackgroundColor="{StaticResource Cornflower}"
+                        TextColor="White"
+                        Text="Delete"
+                        IsVisible="{Binding CanDelete}"
+                        Command="{Binding DeleteCommand}" />
+
+                <Button Margin="2" Grid.Column="2"
+                        BackgroundColor="{StaticResource Cornflower}"
+                        TextColor="White"
                         Text="Cancel"
                         Command="{Binding CancelCommand}" />
             </Grid>

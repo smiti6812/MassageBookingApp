@@ -8,5 +8,6 @@
         public bool IsToday { get; set; }
         public int BookingCount { get; set; }
         public int TotalMassageMinutes { get; set; }
+        public bool IsVisible { get; set; } = true;
     }
 }

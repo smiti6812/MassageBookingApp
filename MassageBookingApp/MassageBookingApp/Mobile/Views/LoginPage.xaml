@@ -24,6 +24,8 @@
                    IsPassword="True" />
 
             <Button Text="Login"
+                    BackgroundColor="{StaticResource Cornflower}"
+                    TextColor="White"
                     HeightRequest="50"
                     Command="{Binding LoginCommand}" />
 

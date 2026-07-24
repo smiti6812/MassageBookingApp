@@ -56,5 +56,19 @@ namespace MassageBookingApp.Mobile.Services
             var result = await response.Content.ReadFromJsonAsync<List<ClientSearchResultDto>>(cancellationToken: cancellationToken);
             return result ?? new List<ClientSearchResultDto>();
         }
+
+        public async Task<IReadOnlyList<ClientSearchResultDto>> SearchClientsWithoutBookingAsync(string query, CancellationToken cancellationToken)
+        {
+            var response = await httpClient.GetAsync($"api/clients/searchnobooking?query={Uri.EscapeDataString(query)}", cancellationToken);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync(cancellationToken);
+                throw new InvalidOperationException($"Client search failed: {error}");
+            }
+
+            var result = await response.Content.ReadFromJsonAsync<List<ClientSearchResultDto>>(cancellationToken: cancellationToken);
+            return result ?? new List<ClientSearchResultDto>();
+        }
     }
 }

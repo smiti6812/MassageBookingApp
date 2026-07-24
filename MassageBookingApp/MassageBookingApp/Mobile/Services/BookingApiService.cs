@@ -9,15 +9,41 @@ namespace MassageBookingApp.Mobile.Services
     {
         private readonly HttpClient httpClient = massageHttpClient;
 
+        public async Task<BookingDto> GetBookingByIdAsync(Guid bookingId, CancellationToken cancellationToken = default)
+        {
+            var response = await httpClient.GetAsync($"api/bookings/{bookingId}", cancellationToken);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync(cancellationToken);
+                throw new InvalidOperationException($"Booking load failed: {error}");
+            }
+
+            var result = await response.Content.ReadFromJsonAsync<BookingDto>(cancellationToken: cancellationToken);
+
+            if (result == null)
+            {
+                throw new InvalidOperationException("Booking response was empty.");
+            }
+
+            return result;
+        }
+
         public async Task<IReadOnlyList<AvailableTherapistDto>> GetAvailableTherapistsAsync(
             DateOnly date,
             TimeOnly startTime,
             int durationMinutes,
+            Guid? ignoreBookingId = null,
             CancellationToken cancellationToken = default)
         {
-            var response = await httpClient.GetAsync(
-                $"api/calendar/available-therapists?date={date:yyyy-MM-dd}&startTime={startTime:HH\\:mm\\:ss}&durationMinutes={durationMinutes}",
-                cancellationToken);
+            var url = $"api/calendar/available-therapists?date={date:yyyy-MM-dd}&startTime={startTime:HH\\:mm\\:ss}&durationMinutes={durationMinutes}";
+
+            if (ignoreBookingId.HasValue)
+            {
+                url += $"&ignoreBookingId={ignoreBookingId.Value}";
+            }
+
+            var response = await httpClient.GetAsync(url, cancellationToken);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -33,11 +59,17 @@ namespace MassageBookingApp.Mobile.Services
             DateOnly date,
             TimeOnly startTime,
             int durationMinutes,
+            Guid? ignoreBookingId = null,
             CancellationToken cancellationToken = default)
         {
-            var response = await httpClient.GetAsync(
-                $"api/calendar/available-room-stations?date={date:yyyy-MM-dd}&startTime={startTime:HH\\:mm\\:ss}&durationMinutes={durationMinutes}",
-                cancellationToken);
+            var url = $"api/calendar/available-room-stations?date={date:yyyy-MM-dd}&startTime={startTime:HH\\:mm\\:ss}&durationMinutes={durationMinutes}";
+
+            if (ignoreBookingId.HasValue)
+            {
+                url += $"&ignoreBookingId={ignoreBookingId.Value}";
+            }
+
+            var response = await httpClient.GetAsync(url, cancellationToken);
 
             if (!response.IsSuccessStatusCode)
             {

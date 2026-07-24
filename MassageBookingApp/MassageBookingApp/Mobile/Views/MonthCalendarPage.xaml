@@ -8,6 +8,8 @@
 
         <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Margin="0,0,0,12">
             <Button Grid.Column="0"
+                    BackgroundColor="{StaticResource Cornflower}"
+                    TextColor="White"
                     Text="&lt;"
                     WidthRequest="50"
                     Command="{Binding PreviousMonthCommand}" />
@@ -20,6 +22,8 @@
                    FontAttributes="Bold" />
 
             <Button Grid.Column="2"
+                    BackgroundColor="{StaticResource Cornflower}"
+                    TextColor="White"
                     Text="&gt;"
                     WidthRequest="50"
                     Command="{Binding NextMonthCommand}" />
@@ -54,35 +58,55 @@
                 <DataTemplate x:DataType="models:MonthDayDto">
                     <Frame Padding="6"
                            Margin="2"
+                           HeightRequest="190"
                            BorderColor="{StaticResource BorderColor}"
                            BackgroundColor="{Binding IsCurrentMonth, Converter={StaticResource BoolToColorConverter}}">
-                        <VerticalStackLayout Spacing="4">
-                            <Label Text="{Binding DayNumber}"
+                        <Grid RowDefinitions="Auto,*,Auto"
+                              RowSpacing="4">
+                            <Label Grid.Row="0"
+                                   IsVisible="{Binding IsVisible}"
+                                   Text="{Binding DayNumber}"
                                    FontAttributes="Bold"
                                    FontSize="14" />
 
-                            <Label Text="{Binding BookingCount, StringFormat='Bookings: {0}'}"
-                                   FontSize="11" />
+                            <VerticalStackLayout Grid.Row="1"
+                                                 IsVisible="{Binding IsVisible}"
+                                                 Spacing="2">
+                                <Label Text="{Binding BookingCount, StringFormat='Bookings: {0}'}"
+                                       FontSize="11" />
+                                <Label Text="{Binding TotalMassageMinutes, StringFormat='Minutes: {0}'}"
+                                       FontSize="11" />
+                            </VerticalStackLayout>
 
-                            <Label Text="{Binding TotalMassageMinutes, StringFormat='Minutes: {0}'}"
-                                   FontSize="11" />
-
-                            <Grid ColumnDefinitions="*,*" Margin="0,4,0,0">
-                                <Button Grid.Column="0"
+                            <Grid Grid.Row="2"
+                                  IsVisible="{Binding IsVisible}"
+                                  RowDefinitions="*,*"
+                                  ColumnSpacing="4"
+                                  Margin="0,4,0,0">                              
+                                    <Button Grid.Row="0"
+                                        BackgroundColor="{StaticResource CadetBlue}"
+                                        TextColor="White"
+                                        Margin="2"
                                         Text="Day"
                                         Padding="4"
                                         FontSize="10"
+                                        MinimumHeightRequest="30"
                                         Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectDayCommand}"
                                         CommandParameter="{Binding .}" />
 
-                                <Button Grid.Column="1"
+                                    <Button Grid.Row="1"
+                                        BackgroundColor="{StaticResource CadetBlue}"
+                                        TextColor="White"
+                                        Margin="2"
                                         Text="Week"
                                         Padding="4"
                                         FontSize="10"
+                                        MinimumHeightRequest="30"
                                         Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.OpenWeekCommand}"
-                                        CommandParameter="{Binding .}" />
+                                        CommandParameter="{Binding .}" />                               
                             </Grid>
-                        </VerticalStackLayout>
+
+                        </Grid>
                     </Frame>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
@@ -90,10 +114,15 @@
 
         <Grid Grid.Row="4" ColumnDefinitions="*,*" Margin="0,12,0,0">
             <Button Grid.Column="0"
+                    Margin="2"
+                    BackgroundColor="{StaticResource Cornflower}"
+                    TextColor="White"
                     Text="Refresh"
                     Command="{Binding LoadCommand}" />
-
             <Button Grid.Column="1"
+                    Margin="2"
+                    BackgroundColor="{StaticResource Cornflower}"
+                    TextColor="White"
                     Text="Logout"
                     Command="{Binding LogoutCommand}" />
         </Grid>

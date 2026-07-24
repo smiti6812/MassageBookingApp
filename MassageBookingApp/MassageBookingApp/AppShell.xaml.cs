@@ -13,6 +13,9 @@ namespace MassageBookingApp
             Routing.RegisterRoute("week", typeof(WeekCalendarPage));
             Routing.RegisterRoute("day", typeof(DaySchedulePage));
             Routing.RegisterRoute("booking-editor", typeof(BookingEditorPage));
+            Routing.RegisterRoute("search-client", typeof(ClientSearchPage));
+            Routing.RegisterRoute("create-client", typeof(CreateClientPage));
+            Routing.RegisterRoute("week-schedule", typeof(WeekSchedulePage));
         }
     }
 }

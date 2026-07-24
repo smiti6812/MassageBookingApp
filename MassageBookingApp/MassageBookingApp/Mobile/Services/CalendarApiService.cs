@@ -8,6 +8,26 @@ namespace MassageBookingApp.Mobile.Services
     {
         private readonly HttpClient httpClient = client;
 
+        public async Task<WeekScheduleDto> GetWeekScheduleAsync(DateOnly date, CancellationToken cancellationToken = default)
+        {
+            var response = await httpClient.GetAsync($"api/calendar/week-schedule?date={date:yyyy-MM-dd}", cancellationToken);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync(cancellationToken);
+                throw new InvalidOperationException($"Week schedule load failed: {error}");
+            }
+
+            var result = await response.Content.ReadFromJsonAsync<WeekScheduleDto>(cancellationToken: cancellationToken);
+
+            if (result == null)
+            {
+                throw new InvalidOperationException("Week schedule response was empty.");
+            }
+
+            return result;
+        }
+
         public async Task<MonthCalendarDto> GetMonthCalendarAsync(int year, int month, CancellationToken cancellationToken = default)
         {
             var response = await httpClient.GetAsync($"api/calendar/month?year={year}&month={month}", cancellationToken);

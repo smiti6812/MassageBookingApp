@@ -9,12 +9,31 @@
         <ResourceDictionary>
             <helpers:BoolToColorConverter x:Key="BoolToColorConverter" />
             <helpers:InverseBoolConverter x:Key="InverseBoolConverter" />
-            
+            <helpers:SelectedToBackgroundColorConverter x:Key="SelectedToBackgroundColorConverter" />
+            <helpers:SelectedToTextColorConverter x:Key="SelectedToTextColorConverter" />
+            <helpers:SelectedPageMultiConverter x:Key="SelectedPageMultiConverter" />
+            <helpers:NotNullConverter x:Key="NotNullConverter" />
+            <helpers:BoolToIsEnabledCollapseColorConverter x:Key="BoolToIsEnabledCollapseColorConverter" />
+
             <Color x:Key="OccupiedColor">Coral</Color>
             <Color x:Key="FreeColor">LightGreen</Color>
             <Color x:Key="PrimaryColor">#2C3E50</Color>
             <Color x:Key="AccentColor">#3498DB</Color>
             <Color x:Key="BorderColor">#D0D0D0</Color>
+            <Color x:Key="CadetBlue">CadetBlue</Color>
+            <Color x:Key="LightGray">#F0F0F0</Color>
+            <Color x:Key="Cornflower">CornflowerBlue</Color>
+
+            <Color x:Key="ShellFlyoutBackgroundColor">#F7F9FC</Color>
+            <Color x:Key="ShellFlyoutTextColor">#1F2937</Color>
+            <Color x:Key="ShellFlyoutDisabledColor">#9CA3AF</Color>
+            <Color x:Key="ShellFlyoutUnselectedColor">#4B5563</Color>
+            <Color x:Key="ShellFlyoutSelectedColor">#FFFFFF</Color>
+            <Color x:Key="ShellFlyoutSelectedBackgroundColor">#3FA7D6</Color>
+
+            <Color x:Key="ShellNavBarBackgroundColor">#1F3A5F</Color>
+            <Color x:Key="ShellNavBarTextColor">#FFFFFF</Color>
+            <Color x:Key="ShellNavBarIconColor">#FFFFFF</Color>
             <Color x:Key="CurrentMonthDayColor">White</Color>
             <Color x:Key="OtherMonthDayColor">#F4F4F4</Color>
             <ResourceDictionary.MergedDictionaries>

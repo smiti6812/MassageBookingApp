@@ -4,8 +4,32 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:MassageBookingApp.Mobile.Views"
+    FlyoutBackgroundColor="{StaticResource ShellFlyoutBackgroundColor}"    
+    Shell.BackgroundColor="{StaticResource ShellNavBarBackgroundColor}"
+    Shell.ForegroundColor="{StaticResource ShellNavBarTextColor}"
+    Shell.TitleColor="{StaticResource ShellNavBarTextColor}"
+    Shell.DisabledColor="{StaticResource ShellFlyoutDisabledColor}"
+    Shell.UnselectedColor="{StaticResource ShellFlyoutUnselectedColor}"
+    Shell.TabBarForegroundColor="{StaticResource ShellNavBarTextColor}"
+    Shell.TabBarTitleColor="{StaticResource ShellNavBarTextColor}"
+    Shell.TabBarUnselectedColor="{StaticResource ShellFlyoutUnselectedColor}"    
+    Shell.NavBarHasShadow="True"
     Title="Massage Booking App">
-
+    <Shell.FlyoutHeader>
+        <Grid HeightRequest="120"
+              BackgroundColor="{StaticResource ShellNavBarBackgroundColor}"
+              Padding="20">
+            <VerticalStackLayout VerticalOptions="Center">
+                <Label Text="Massage Booking"
+                       TextColor="White"
+                       FontSize="24"
+                       FontAttributes="Bold" />
+                <Label Text="Reception Panel"
+                       TextColor="#D1D5DB"
+                       FontSize="14" />
+            </VerticalStackLayout>
+        </Grid>
+    </Shell.FlyoutHeader>
     <ShellContent
         Title="Login"
         ContentTemplate="{DataTemplate local:LoginPage}"
@@ -22,6 +46,11 @@
         Route="week" />
 
     <ShellContent
+        Title="Week Schedule"
+        ContentTemplate="{DataTemplate local:WeekSchedulePage}"
+        Route="week-schedule" />
+
+    <ShellContent
         Title="Day"
         ContentTemplate="{DataTemplate local:DaySchedulePage}"
         Route="day" />
@@ -30,4 +59,14 @@
         Title="Booking Editor"
         ContentTemplate="{DataTemplate local:BookingEditorPage}"
         Route="booking-editor" />
+
+    <ShellContent
+     Title="Search Client"
+     ContentTemplate="{DataTemplate local:ClientSearchPage}"
+     Route="search-client" />
+
+    <ShellContent
+    Title="Create Client"
+    ContentTemplate="{DataTemplate local:CreateClientPage}"
+    Route="create-client" />
 </Shell>

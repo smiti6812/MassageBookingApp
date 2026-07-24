@@ -7,9 +7,10 @@ using System.Collections.ObjectModel;
 namespace MassageBookingApp.Mobile.ViewModels;
 
 [QueryProperty(nameof(DateQuery), "date")]
-public partial class DayScheduleViewModel(ICalendarApiService calendarApiServ) : ObservableObject
+public partial class DayScheduleViewModel : ObservableObject
 {
-    private readonly ICalendarApiService calendarApiService = calendarApiServ;
+    private readonly ICalendarApiService calendarApiService;
+    private readonly IBookingApiService bookingApiService;
 
     [ObservableProperty]
     private bool isBusy;
@@ -26,10 +27,39 @@ public partial class DayScheduleViewModel(ICalendarApiService calendarApiServ) :
     [ObservableProperty]
     private DateOnly selectedDate;
 
+    [ObservableProperty]
+    private int selectedRoomIndex;
+
     public ObservableCollection<string> TimeSlots { get; } = new();
     public ObservableCollection<DayRoomScheduleDto> Rooms { get; } = new();
 
+    [ObservableProperty]
+    private RoomPagingViewModel roomPager;
+
+    [ObservableProperty]
+    private RoomScheduleGroupViewModel currentRoom;
     public bool HasError => !string.IsNullOrWhiteSpace(ErrorMessage);
+
+    public DayScheduleViewModel(ICalendarApiService calendarApiServ, IBookingApiService bookingApiServ)
+    {
+        calendarApiService = calendarApiServ;
+        bookingApiService = bookingApiServ;
+        RoomPager = new RoomPagingViewModel([]);
+        RoomPager.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(RoomPager.CurrentPage) ||
+                e.PropertyName == nameof(RoomPager.SelectedPage))
+            {
+                CurrentRoom = RoomPager.PagedItems[0];
+                OnPropertyChanged(nameof(CurrentRoom));
+            }
+        };
+
+        RoomPager.PagedItems.CollectionChanged += (_, _) =>
+        {
+            OnPropertyChanged(nameof(CurrentRoom));
+        };
+    }
 
     partial void OnErrorMessageChanged(string value)
     {
@@ -44,13 +74,11 @@ public partial class DayScheduleViewModel(ICalendarApiService calendarApiServ) :
         }
     }
 
-    partial void OnSelectedDateChanged(DateOnly value) => Title = $"Day Schedule - {value:yyyy-MM-dd}";    
+    partial void OnSelectedDateChanged(DateOnly value) => Title = $"Day Schedule - {value:yyyy-MM-dd}";
 
     [RelayCommand]
-    public async Task InitializeAsync()
-    {
-        await LoadAsync();
-    }
+    public async Task InitializeAsync() => await LoadAsync();
+
 
     [RelayCommand]
     public async Task LoadAsync()
@@ -80,6 +108,9 @@ public partial class DayScheduleViewModel(ICalendarApiService calendarApiServ) :
             {
                 Rooms.Add(room);
             }
+
+            BuildRoomPager(result.Rooms);
+            OnPropertyChanged(nameof(CurrentRoom));
         }
         catch (Exception ex)
         {
@@ -90,6 +121,39 @@ public partial class DayScheduleViewModel(ICalendarApiService calendarApiServ) :
             IsBusy = false;
         }
     }
+
+    private void BuildRoomPager(IEnumerable<DayRoomScheduleDto> rooms)
+    {
+        var groupedRooms = rooms
+            .GroupBy(r => new { r.RoomId, r.RoomName, r.RoomCapacity })
+            .OrderBy(g => g.Key.RoomName)
+            .Select(group =>
+            {
+                var roomGroup = new RoomScheduleGroupViewModel
+                {
+                    RoomId = group.Key.RoomId,
+                    RoomName = group.Key.RoomName,
+                    RoomCapacity = group.Key.RoomCapacity
+                };
+
+                foreach (var station in group)
+                {
+                    roomGroup.Stations.Add(new RoomStationScheduleViewModel
+                    {
+                        RoomStationId = station.RoomStationId,
+                        RoomStationName = station.RoomStationName,
+                        Cells = station.Cells
+                    });
+                }
+
+                return roomGroup;
+            })
+            .ToList();
+
+        RoomPager.UpdateAllItems(groupedRooms);
+        CurrentRoom = RoomPager.PagedItems.FirstOrDefault();
+    }
+
 
     [RelayCommand]
     public async Task PreviousDayAsync()
@@ -125,12 +189,23 @@ public partial class DayScheduleViewModel(ICalendarApiService calendarApiServ) :
             return;
         }
 
-        if (cell.IsOccupied)
+        if (cell.IsOccupied && cell.BookingId.HasValue)
         {
-            await Application.Current!.MainPage!.DisplayAlert(
-                "Booking Details",
-                $"Time: {cell.TimeSlot}\nClient: {cell.ClientName}\nTherapist: {cell.TherapistName}",
-                "OK");
+            var action = await Application.Current!.MainPage!.DisplayActionSheet(
+                $"Booking\nClient: {cell.ClientName}\nTherapist: {cell.TherapistName}\nTime: {cell.TimeSlot}",
+                "Cancel",
+                null,
+                "Edit",
+                "Delete");
+
+            if (action == "Edit")
+            {
+                await Shell.Current.GoToAsync($"booking-editor?bookingId={cell.BookingId.Value}");
+            }
+            else if (action == "Delete")
+            {
+                await DeleteBookingAsync(cell.BookingId.Value);
+            }
         }
         else
         {
@@ -158,5 +233,37 @@ public partial class DayScheduleViewModel(ICalendarApiService calendarApiServ) :
     {
         var time = string.IsNullOrWhiteSpace(timeSlot) ? "10:00" : timeSlot;
         await Shell.Current.GoToAsync($"//booking-editor?date={SelectedDate:yyyy-MM-dd}&time={time}");
+    }
+
+    private async Task DeleteBookingAsync(Guid bookingId)
+    {
+        try
+        {
+            var bookingApiService = IPlatformApplication.Current!.Services.GetService<IBookingApiService>();
+
+            if (bookingApiService == null)
+            {
+                await Application.Current!.MainPage!.DisplayAlert("Error", "Booking service is not available.", "OK");
+                return;
+            }
+
+            var confirm = await Application.Current!.MainPage!.DisplayAlert(
+                "Delete Booking",
+                "Are you sure you want to delete this booking?",
+                "Yes",
+                "No");
+
+            if (!confirm)
+                return;
+
+            await bookingApiService.CancelBookingAsync(bookingId);
+
+            await Application.Current!.MainPage!.DisplayAlert("Deleted", "Booking deleted.", "OK");
+            await LoadAsync();
+        }
+        catch (Exception ex)
+        {
+            await Application.Current!.MainPage!.DisplayAlert("Error", ex.Message, "OK");
+        }
     }
 }
